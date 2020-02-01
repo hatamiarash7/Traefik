@@ -22,11 +22,14 @@ services:
       - --certificatesresolvers.mytlschallenge.acme.email=${EMAIL}
       - --certificatesresolvers.mytlschallenge.acme.storage=/letsencrypt/acme.json
     volumes:
-      - traefik_le:/letsencrypt
+      - letsencrypt:/letsencrypt
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - proxy
     deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
       labels:
         - traefik.enable=true
         - traefik.http.routers.api.rule=Host(`${DOMAIN}`)
@@ -37,4 +40,4 @@ networks:
     external: true
 
 volumes:
-  traefik_le:
+  letsencrypt:
